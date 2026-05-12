@@ -1,17 +1,14 @@
 import { useState } from "react";
+import API from "./api";
 
 function App() {
   const [message, setMessage] = useState("");
 
   const connectBackend = async () => {
     try {
-      const response = await fetch(
-        "https://hostelhub-jjvn.onrender.com/"
-      );
+      const response = await API.get("/");
 
-      const data = await response.text();
-
-      setMessage(data);
+      setMessage(response.data);
     } catch (error) {
       setMessage("Connection failed");
     }

@@ -1,3 +1,7 @@
-const API_URL = "https://hostelhub-jjvn.onrender.com"
+import axios from "axios";
 
-export default API_URL
+const API = axios.create({
+  baseURL: "https://hostelhub-jjvn.onrender.com",
+});
+
+export default API;
