@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-hero compact">
+  <div>
+    <span class="page-kicker">Messages</span>
+    <h1>Chats</h1>
+    <p>Continue conversations with students across your hostel marketplace.</p>
+  </div>
+</section>
+
+<div class="app-list">
+  {% for c in contacts %}
+  <a class="app-list-item" href="{{ url_for('main.chat_with', user_id=c.id) }}">
+    <div class="app-list-main">
+      <div>
+        <strong>{{ c.name }}</strong>
+        <span>{{ c.hostel_name }} | Room {{ c.room_number }}</span>
+        {% if c.last_message %}
+        <p>{{ c.last_message.sender.name }}: {{ c.last_message.content }}</p>
+        {% else %}
+        <p>No messages yet.</p>
+        {% endif %}
+      </div>
+      {% if c.last_message %}
+      <small>{{ c.last_message.created_at.strftime('%d %b %I:%M %p') }}</small>
+      {% endif %}
+    </div>
+  </a>
+  {% else %}
+  <div class="app-empty">No users available.</div>
+  {% endfor %}
+</div>
+{% endblock %}

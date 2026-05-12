@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="market-shell">
+  <section class="market-header">
+    <div>
+      <span class="market-kicker">Student Marketplace</span>
+      <h1>Find what you need around your hostel.</h1>
+      <p>Browse local listings, request items, and chat directly with students nearby.</p>
+    </div>
+    <a class="btn btn-primary market-post-btn" href="{{ url_for('main.create_item') }}">Post Item</a>
+  </section>
+
+  <form method="get" class="market-filter">
+    {% if mine %}
+    <input type="hidden" name="mine" value="1">
+    {% endif %}
+    <div>
+      <label for="category">Category</label>
+      <select class="form-select" id="category" name="category">
+        <option value="">All Categories</option>
+        {% for c in categories %}
+        <option value="{{ c }}" {% if request.args.get('category') == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="keyword">Search</label>
+      <input class="form-control" id="keyword" name="keyword" value="{{ request.args.get('keyword','') }}" placeholder="Book, lamp, chair...">
+    </div>
+    <div>
+      <label for="max_price">Max price</label>
+      <input class="form-control" id="max_price" name="max_price" value="{{ request.args.get('max_price','') }}" placeholder="500">
+    </div>
+    <button class="btn btn-dark" type="submit">Filter</button>
+    {% if request.args.get('category') or request.args.get('keyword') or request.args.get('max_price') %}
+    <a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Clear</a>
+    {% endif %}
+  </form>
+
+  <div class="market-tabs">
+    <a class="{% if not mine %}active{% endif %}" href="{{ url_for('main.index') }}">All Items</a>
+    <a class="{% if mine %}active{% endif %}" href="{{ url_for('main.index', mine=1) }}">My Items <span>{{ my_item_count }}</span></a>
+  </div>
+
+  <div class="market-toolbar">
+    <div>
+      <strong>{{ items|length }}</strong>
+      <span>{% if mine %}of your item{% if items|length != 1 %}s{% endif %}{% else %}item{% if items|length != 1 %}s{% endif %} available in marketplace{% endif %}</span>
+    </div>
+  </div>
+</div>
+
+<div class="market-grid">
+  {% for item in items %}
+  <article class="market-card">
+    <div class="market-image">
+      {% if item.image_filename %}
+      <img src="{{ url_for('main.uploaded_file', filename=item.image_filename) }}" alt="{{ item.title }}">
+      {% else %}
+      <div class="market-image-empty">
+        <span>{{ item.category[:1]|upper }}</span>
+      </div>
+      {% endif %}
+      <span class="market-status {% if item.status == 'available' %}available{% else %}sold{% endif %}">{{ item.status }}</span>
+    </div>
+
+    <div class="market-card-body">
+      <div class="market-card-top">
+        <span>{{ item.category }}</span>
+        <strong>Rs. {{ '%.2f'|format(item.price) }}</strong>
+      </div>
+      <h2>{{ item.title }}</h2>
+      <p>{{ item.description }}</p>
+
+      <div class="market-seller">
+        <div>
+          <strong>{{ item.seller.name }}</strong>
+          <span>{{ item.seller.hostel_name }} | Room {{ item.seller.room_number }}</span>
+        </div>
+      </div>
+
+      <div class="market-actions">
+        {% if current_user.id != item.seller_id and item.status == 'available' %}
+        <button class="btn btn-primary" onclick="requestItem({{ item.id }})">Request Item</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('main.chat_with', user_id=item.seller_id) }}">Chat Seller</a>
+        {% elif current_user.id == item.seller_id %}
+        <a class="btn btn-outline-primary" href="{{ url_for('main.edit_item', item_id=item.id) }}">Edit</a>
+        <form method="post" action="{{ url_for('main.delete_item', item_id=item.id) }}">
+          <button class="btn btn-outline-danger" type="submit">Delete</button>
+        </form>
+        {% else %}
+        <a class="btn btn-outline-secondary" href="{{ url_for('main.chat_with', user_id=item.seller_id) }}">Chat Seller</a>
+        {% endif %}
+      </div>
+    </div>
+  </article>
+  {% else %}
+  <div class="market-empty">
+    <h2>{% if mine %}No items posted yet{% else %}No items found{% endif %}</h2>
+    <p>{% if mine %}Post an item and it will appear here for quick edit or delete.{% else %}Try changing filters or post the first item for your hostel network.{% endif %}</p>
+    <a class="btn btn-primary" href="{{ url_for('main.create_item') }}">Post Item</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

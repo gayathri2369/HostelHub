@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="auth-shell">
+  <div class="auth-panel auth-panel-copy">
+    <div class="auth-badge">HostelHub</div>
+    <h1>Campus exchange, made simple.</h1>
+    <p>Buy, sell, donate, chat, and complete hostel transactions from one clean student marketplace.</p>
+    <div class="auth-stats" aria-label="HostelHub highlights">
+      <div>
+        <strong>Fast</strong>
+        <span>direct seller chat</span>
+      </div>
+      <div>
+        <strong>Local</strong>
+        <span>hostel and room details</span>
+      </div>
+      <div>
+        <strong>Trusted</strong>
+        <span>ratings after deals</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-panel auth-card">
+    <div class="auth-card-header">
+      <span>Welcome back</span>
+      <h2>Sign in</h2>
+    </div>
+    <form method="post" class="auth-form">
+      <label for="email">Email</label>
+      <input class="form-control" id="email" type="email" name="email" placeholder="alice@example.com" required>
+
+      <label for="password">Password</label>
+      <input class="form-control" id="password" type="password" name="password" placeholder="Enter your password" required>
+
+      <button class="btn btn-primary w-100 auth-submit" type="submit">Login</button>
+    </form>
+    <p class="auth-switch">New to HostelHub? <a href="{{ url_for('auth.register') }}">Create account</a></p>
+  </div>
+</div>
+{% endblock %}

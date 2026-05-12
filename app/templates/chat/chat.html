@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="chat-layout" id="chatPage" data-other-user-id="{{ other_user.id }}" data-current-user-id="{{ current_user.id }}" data-current-user-name="{{ current_user.name }}">
+  <aside class="chat-sidebar">
+    <div class="section-title">
+      <span>Messages</span>
+      <h1>Contacts</h1>
+    </div>
+    <div class="chat-contact-list">
+      {% for c in contacts %}
+      <a class="chat-contact {% if c.id == other_user.id %}active{% endif %}" href="{{ url_for('main.chat_with', user_id=c.id) }}">
+        <div class="fw-semibold">{{ c.name }}</div>
+        <span>{{ c.hostel_name }} | Room {{ c.room_number }}</span>
+        {% if c.last_message %}
+        <p>{{ c.last_message.content }}</p>
+        {% endif %}
+      </a>
+      {% endfor %}
+    </div>
+  </aside>
+  <section class="chat-panel">
+    <header class="chat-header">
+      <div>
+        <span>Chat with</span>
+        <h1>{{ other_user.name }}</h1>
+      </div>
+      <p>{{ other_user.hostel_name }} | Room {{ other_user.room_number }}</p>
+    </header>
+    <div class="chat-box" id="chatBox">
+      {% for msg in messages %}
+      <div class="chat-msg {% if msg.sender_id == current_user.id %}me{% else %}them{% endif %}" id="message-{{ msg.id }}">
+        <small>{{ msg.sender.name }}:</small> {{ msg.content }}
+      </div>
+      {% endfor %}
+    </div>
+    <form class="input-group" id="chatForm">
+      <input class="form-control" id="chatInput" placeholder="Type message...">
+      <button class="btn btn-primary" id="chatSendButton" type="submit">Send</button>
+    </form>
+  </section>
+</div>
+{% endblock %}

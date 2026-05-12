@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="page-hero compact">
+  <div>
+    <span class="page-kicker">Exchange Status</span>
+    <h1>Transactions</h1>
+    <p>Track requests, seller approvals, completions, and ratings in one place.</p>
+  </div>
+</section>
+
+<div class="app-surface table-surface">
+  <div class="table-responsive">
+    <table class="table app-table align-middle">
+      <thead><tr><th>Item</th><th>Buyer</th><th>Seller</th><th>Status</th><th>Actions</th></tr></thead>
+      <tbody>
+      {% for t in transactions %}
+        <tr>
+          <td><strong>{{ t.item.title }}</strong></td>
+          <td>{{ t.buyer.name }}</td>
+          <td>{{ t.seller.name }}</td>
+          <td><span class="status-pill">{{ t.status }}</span></td>
+          <td>
+            <div class="table-actions">
+              {% if current_user.id == t.seller_id and t.status == 'requested' %}
+              <button class="btn btn-sm btn-success" onclick="updateTxn({{ t.id }}, 'accepted')">Accept</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="updateTxn({{ t.id }}, 'rejected')">Reject</button>
+              {% endif %}
+              {% if current_user.id == t.seller_id and t.status == 'accepted' %}
+              <button class="btn btn-sm btn-primary" onclick="updateTxn({{ t.id }}, 'completed')">Mark Completed</button>
+              {% endif %}
+              {% if current_user.id != t.seller_id %}
+              <button class="btn btn-sm btn-outline-secondary" onclick="rateUser({{ t.seller_id }}, {{ t.id }})">Rate Seller</button>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+      {% else %}
+        <tr><td colspan="5"><div class="app-empty">No transactions yet.</div></td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

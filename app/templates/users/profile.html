@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="profile-hero">
+  <div class="profile-avatar">{{ profile_user.name[:1]|upper }}</div>
+  <div>
+    <span class="page-kicker">Student Profile</span>
+    <h1>{{ profile_user.name }}</h1>
+    <p>{{ profile_user.hostel_name }} | Room {{ profile_user.room_number }}</p>
+  </div>
+  <div class="profile-rating">
+    <strong>{{ profile_user.average_rating }}</strong>
+    <span>Average Rating</span>
+  </div>
+</section>
+
+<div class="profile-grid">
+  <section class="app-surface">
+    <div class="section-title">
+      <span>Contact</span>
+      <h1>Details</h1>
+    </div>
+    <dl class="detail-list">
+      <div><dt>Email</dt><dd>{{ profile_user.email }}</dd></div>
+      <div><dt>Hostel</dt><dd>{{ profile_user.hostel_name }}</dd></div>
+      <div><dt>Room</dt><dd>{{ profile_user.room_number }}</dd></div>
+    </dl>
+  </section>
+
+  <section class="app-surface">
+    <div class="section-title">
+      <span>Trust</span>
+      <h1>Ratings</h1>
+    </div>
+    <div class="rating-list">
+  {% for r in ratings %}
+      <div class="rating-item">
+        <strong>{{ r.score }}/5</strong>
+        <p>{{ r.comment or 'No comment' }}</p>
+      </div>
+  {% else %}
+      <div class="app-empty">No ratings yet.</div>
+  {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}
